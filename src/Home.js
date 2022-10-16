@@ -28,6 +28,7 @@ import {
   Legend,
   BarElement,
   RadialLinearScale,
+  LineController,
 } from "chart.js";
 import About from "./About";
 import Building from "./Building";
@@ -41,7 +42,8 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
-  RadialLinearScale
+  RadialLinearScale,
+  LineController
 );
 
 export default function Home() {
@@ -64,8 +66,6 @@ export default function Home() {
   const [suspiciousStudentList, setSuspiciousStudentList] = useState();
   const [studentValues, setStudentValues] = useState();
 
-  // const []
-
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -73,7 +73,6 @@ export default function Home() {
   //State to store the values
   const [values, setValues] = useState([]);
   const onClick = (event) => {
-    console.log(getElementAtEvent(chartRef.current, event));
     setCurrentBuilding(getElementAtEvent(chartRef.current, event)[0].index);
 
     // alert(getElementAtEvent(chartRef.current, event)[0].index);
@@ -92,7 +91,6 @@ export default function Home() {
 
   //building-info
   const buildingInfoHandler = (event) => {
-    console.log(event.target.files[0]);
     Papa.parse(event.target.files[0], {
       header: true,
       skipEmptyLines: true,
@@ -112,10 +110,8 @@ export default function Home() {
 
         setBuildingNames(buildingNamesArray);
 
-        console.log(buildingNamesArray, "this is building names array");
         // Parsed Data Response in array format
 
-        console.log(valuesArray);
         setBuildingPasrsedData(results.data);
 
         // Filtered Column Names
@@ -130,7 +126,6 @@ export default function Home() {
   //security-logs.
 
   const securityInfoHandler = (event) => {
-    console.log(event.target.files[0]);
     Papa.parse(event.target.files[0], {
       header: true,
       skipEmptyLines: true,
@@ -146,7 +141,6 @@ export default function Home() {
 
         // Parsed Data Response in array format
 
-        console.log(valuesArray);
         setSecurityParsedData(results.data);
 
         // Filtered Column Names
@@ -163,7 +157,6 @@ export default function Home() {
   //compare
 
   const peopleDataHandler = (event) => {
-    console.log(event.target.files[0]);
     Papa.parse(event.target.files[0], {
       header: true,
       skipEmptyLines: true,
@@ -180,7 +173,6 @@ export default function Home() {
 
         // Parsed Data Response in array format
 
-        console.log("lol", valuesArray);
         // setParsedData(results.data);
         // for (let i = 0; i < valuesArray.length; i++) {
         //   studentValues.push(valuesArray[i][0]);
@@ -188,8 +180,6 @@ export default function Home() {
         setStudentValues(valuesArray);
 
         // setBuildingNames(buildingNamesArray);
-
-        // console.log(buildingNamesArray, "this is building names array");
 
         // Filtered Column Names
         // setTableRows(rowsArray[0]);
@@ -199,9 +189,10 @@ export default function Home() {
       },
     });
   };
+
   // Chart.register(CategoryScale);
 
-  const findThief = () => {
+  const findSus = () => {
     setLoading(true);
     let susArrayEnterTime = [];
     let susArrayClosingTime = [];
@@ -210,11 +201,6 @@ export default function Home() {
 
     var normalStudents = [];
     var suspiciousStudents = [];
-    var totalHoursArray = [];
-    var outofHoursArray = [];
-
-    // console.log("Building values------", buildingValues);
-    // console.log("Security Values----", securityValues);
 
     for (let i = 0; i < securityValues.length; i++) {
       let building = securityValues[i][2];
@@ -223,8 +209,6 @@ export default function Home() {
       let exitTime = parseInt(time.split("-")[1]);
       let openingTime;
       let closingTime;
-
-      console.log(securityValues[i][2]);
 
       for (let j = 0; j < buildingValues.length; j++) {
         if (building === buildingValues[j][0]) {
@@ -242,17 +226,14 @@ export default function Home() {
         building !== "Kelvingrove Park" &&
         building !== "Library"
       ) {
-        // console.log(securityValues[i]);
         susArrayClosingTime.push(securityValues[i][0]);
         if (!outOfHours[securityValues[i][2]]) {
           outOfHours[securityValues[i][2]] = 1;
           suspiciousStudents.push(securityValues[i]);
-          console.log(outOfHours, "this is dict1", securityValues[i]);
         } else {
           outOfHours[securityValues[i][2]] =
             outOfHours[securityValues[i][2]] + 1;
           suspiciousStudents.push(securityValues[i]);
-          console.log(outOfHours, "this is dict1", securityValues[i]);
         }
       } else if (building === "Library") {
         if (exitTime > closingTime && exitTime < openingTime) {
@@ -260,24 +241,12 @@ export default function Home() {
           if (!outOfHours[securityValues[i][2]]) {
             outOfHours[securityValues[i][2]] = 1;
             suspiciousStudents.push(securityValues[i]);
-            console.log(outOfHours, "this is dict3", securityValues[i]);
           } else {
             outOfHours[securityValues[i][2]] =
               outOfHours[securityValues[i][2]] + 1;
             suspiciousStudents.push(securityValues[i]);
-            console.log(outOfHours, "this is dict4", securityValues[i]);
           }
         }
-
-        // if (enterTime > 1800 && enterTime < 2000) {
-        //   if (exitTime > 1800 && exitTime < 2000)
-        //     console.log(
-        //       securityValues[i],
-        //       "other suspicious",
-        //       enterTime,
-        //       exitTime
-        //     );
-        // }
       } else {
         if (!totalHours[securityValues[i][2]]) {
           totalHours[securityValues[i][2]] = 1;
@@ -297,21 +266,7 @@ export default function Home() {
 
       //splitting based on building.
     }
-    // console.log(susArrayClosingTime);
-    // console.log(susArrayEnterTime);
 
-    // for (let i = 0; i < susArrayClosingTime.length; i++) {
-    //   if (!dict[susArrayClosingTime[i]]) {
-    //     dict[susArrayClosingTime[i]] = 1;
-    //   } else {
-    //     dict[susArrayClosingTime[i]] = dict[susArrayClosingTime[i]] + 1;
-    //   }
-    // }
-    console.log(totalHours, "this is dict");
-    console.log(outOfHours, "this is dict2");
-
-    // console.log(outOfHours, "this is dict");
-    //  var keys = Object.keys();
     var bNames = Object.keys(totalHours);
 
     setBuildingNames(bNames);
@@ -327,12 +282,30 @@ export default function Home() {
     setSuspiciousStudentList(suspiciousStudents);
     setDataUploaded(true);
     setLoading(false);
-
-    // var oof = Object.values
   };
   return (
     <>
       {" "}
+      {dataUploaded ? (
+        <>
+          <div
+            style={{
+              width: "100vw",
+              background: "lightgreen",
+              display: "flex",
+              justifyContent: "center",
+              height: "40px",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => navigate("/fullAnalysis")}
+          >
+            View Full Analysis
+          </div>
+        </>
+      ) : (
+        ""
+      )}
       <div>
         <center>
           <h1>Team 03</h1>
@@ -347,19 +320,18 @@ export default function Home() {
             data={{
               labels: buildingNames.map((res) => res),
               datasets: [
-                {
-                  type: "line",
-                  label: "Total present Out of Hours",
-                  data: outsideHoursCount.map((res) => res),
-                  fill: false,
-                  borderColor: "rgb(54, 162, 235)",
-                  backgroundColor: "red",
-                },
+                // {
+                //   type: "line",
+                //   label: "Total present Out of Hours",
+                //   data: outsideHoursCount.map((res) => res),
+                //   fill: false,
+                //   borderColor: "rgb(54, 162, 235)",
+                //   backgroundColor: "red",
+                // },
                 {
                   type: "bar",
                   label: "Total present in Hours",
                   data: buildingVisitedCount.map((res) => {
-                    console.log(res, "this is res");
                     return res;
                   }),
                   borderColor: "rgb(255, 99, 132)",
@@ -373,15 +345,6 @@ export default function Home() {
                   borderColor: "rgb(54, 162, 235)",
                   backgroundColor: "red",
                 },
-
-                // {
-                //   type: "line",
-                //   label: "Total present Out of Hours",
-                //   data: [0, 0, 1, 0],
-                //   fill: false,
-                //   borderColor: "rgb(54, 162, 235)",
-                //   backgroundColor: "red",
-                // },
               ],
             }}
             options={{
@@ -389,7 +352,7 @@ export default function Home() {
               plugins: {
                 title: {
                   display: true,
-                  text: "Chart.js Bar Chart - Stacked",
+                  text: "Number of Visited Each Building ( Click on building to know more)",
                 },
               },
 
@@ -441,7 +404,7 @@ export default function Home() {
             onChange={peopleDataHandler}
           />
           <center>
-            <button onClick={() => findThief()}>Find Suspicious!</button>
+            <button onClick={() => findSus()}>Find Suspicious!</button>
           </center>
         </>
       )}

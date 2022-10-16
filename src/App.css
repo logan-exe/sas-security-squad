@@ -1,11 +1,19 @@
+html,
+body {
+  height: 100%;
+}
 table,
 th,
 td {
   border: 1px solid black;
-  border-collapse: collapse;
 }
 
 .tableRow:hover {
   background-color: lightgray;
   cursor: pointer;
+}
+
+table {
+  overflow: scroll;
+  height: 200px !important;
 }

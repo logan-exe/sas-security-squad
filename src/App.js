@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Map from "./Map";
 import { useRef } from "react";
 import { Bar, Line, getDatasetAtEvent } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from "chart.js";
@@ -19,6 +20,7 @@ import {
 import About from "./About";
 import Building from "./Building";
 import Home from "./Home";
+import FullAnalysis from "./FullAnalysis";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -78,25 +80,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="building" element={<Building />} />
+          <Route path="Map" element={<Map />} />
+          <Route path="fullAnalysis" element={<FullAnalysis />} />
         </Routes>
       </BrowserRouter>
-      {/* <Bar options={options} data={data} />; */}
     </>
   );
 }
 
-function Users() {
-  return (
-    <div>
-      <nav>
-        <Link to="me">My Profile</Link>
-      </nav>
-
-      {/* <Routes>
-        <Route path=":id" element={<UserProfile />} />
-        <Route path="me" element={<OwnUserProfile />} />
-      </Routes> */}
-    </div>
-  );
-}
 export default App;
