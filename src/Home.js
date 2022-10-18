@@ -320,14 +320,14 @@ export default function Home() {
             data={{
               labels: buildingNames.map((res) => res),
               datasets: [
-                // {
-                //   type: "line",
-                //   label: "Total present Out of Hours",
-                //   data: outsideHoursCount.map((res) => res),
-                //   fill: false,
-                //   borderColor: "rgb(54, 162, 235)",
-                //   backgroundColor: "red",
-                // },
+                {
+                  type: "line",
+                  label: "Total present Out of Hours",
+                  data: outsideHoursCount.map((res) => res),
+                  fill: false,
+                  borderColor: "rgb(54, 162, 235)",
+                  backgroundColor: "red",
+                },
                 {
                   type: "bar",
                   label: "Total present in Hours",
